@@ -2,7 +2,7 @@ name: ZeldaUnreal engine TCP transport smoke (ROM-free)
 on:
   push:
     branches: ["feature/zeldaunreal-tcp-validation"]
-  pull_request:
+  # Push-only to avoid duplicate CI jobs on a same-repo pull request.
   workflow_dispatch:
 
 permissions:
