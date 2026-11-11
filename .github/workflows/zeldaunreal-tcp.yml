@@ -1,0 +1,25 @@
+name: ZeldaUnreal engine TCP transport smoke (ROM-free)
+on:
+  push:
+    branches: ["feature/zeldaunreal-tcp-validation"]
+  # Push-only to avoid duplicate CI jobs on a same-repo pull request.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tcp-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile actual cycle TCP server plus mock handler
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra \
+            -I runner/cyc \
+            tests/zeldaunreal/cyc_tcp_bridge_probe.c \
+            runner/cyc/cyc_tcp.c \
+            -o /tmp/zeldaunreal_tcp_probe
+      - name: Exercise live loopback TCP protocol
+        run: python3 tests/zeldaunreal/check_tcp_transport.py /tmp/zeldaunreal_tcp_probe
